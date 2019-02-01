@@ -28,16 +28,9 @@ public class MainClassLoader {
 	public void loadMainClasses(ArrayList<File> mods) {
 		ArrayList<String> modClassMap = getModDependencies();
 		
-		System.out.println("TIME START");
-		long startTime = System.currentTimeMillis();
-		
 		for(File file : mods) {
 			loadClass(file, modClassMap);
 		}
-		
-		System.out.println("TIME END");
-		long endTime = System.currentTimeMillis();
-		System.out.println((endTime - startTime));
 	}
 	
 	private void loadClass(File mod, ArrayList<String> mainClasses) {
@@ -50,8 +43,6 @@ public class MainClassLoader {
 			    URL urls [] = { new URL(jarURL) };
 			    URLClassLoader clsLoader = URLClassLoader.newInstance(urls);
 			    Class<?> cls = clsLoader.loadClass(mainClasses.get(i));
-//			    URLClassLoader ucl = new URLClassLoader(urls, FMLModContainer.class.getClassLoader());
-//			    Class<?> clazz = Class.forName(mainClasses.get(i), false, ucl);
 			    System.out.println("Found " + cls.getSimpleName());
 			    
 			    if(isMod(cls)) {
@@ -103,7 +94,7 @@ public class MainClassLoader {
 
 		if(Downloader.downloadedDependencies.containsKey(modid)) return;
 		
-		System.out.printf("%s\n%s\n%s\n", info.dependants, info.dependencies, info.requirements);
+		System.out.printf("%s\n%s\n", info.dependencies, info.requirements);
 		
 		URL url = new URL("https://api.cfwidget.com/minecraft/mc-mods/ptrlib?version=" + Safeguard.MCVERSION);
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -120,7 +111,6 @@ public class MainClassLoader {
 	}
 	
 	public static boolean isMod(Class<?> clazz) {
-	    //return clazz.isAnnotationPresent(Mod.class);
 		if(getModAnnotationString(clazz) != null)
 			return true;
 		
