@@ -67,3 +67,10 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+jar {
+	manifest {
+        attributes 'FMLCorePlugin': 'net.geforcemods.safeguard.asm.LoadingHook'
+        attributes 'FMLCorePluginContainsFMLMod': 'net.geforcemods.safeguard.Safeguard'
+    }
+}

@@ -3,10 +3,19 @@ package net.geforcemods.safeguard.loader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,23 +52,23 @@ public class DependencyHandler {
 			
 			System.out.printf("%s\n%s\n", info.dependencies, info.requirements);
 			
-			/*try {
+			try {
 				SSLContext ctx = SSLContext.getInstance("TLS");
 				ctx.init(new KeyManager[0], new TrustManager[] {new DefaultTrustManager()}, new SecureRandom());
 				SSLContext.setDefault(ctx);
 			}
 			catch(Exception e){
 				
-			}*/
+			}
 			
 			URL url = new URL("https://api.cfwidget.com/minecraft/mc-mods/" + cfDependency.cfProjectName + "?version=" + Safeguard.MCVERSION);
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-			/*con.setHostnameVerifier(new HostnameVerifier() {
+			con.setHostnameVerifier(new HostnameVerifier() {
 	            @Override
 	            public boolean verify(String arg0, SSLSession arg1) {
 	                return true;
 	            }
-	        });*/
+	        });
 			con.setRequestMethod("GET");
 			
 			CFMod result  = new Gson().fromJson(new InputStreamReader(con.getInputStream()), CFMod.class);
@@ -94,7 +103,7 @@ public class DependencyHandler {
 		return null;
 	}
 	
-	/*private static class DefaultTrustManager implements X509TrustManager {
+	private static class DefaultTrustManager implements X509TrustManager {
 
         @Override
         public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
@@ -108,6 +117,6 @@ public class DependencyHandler {
         public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
-    }*/
+    }
 
 }
