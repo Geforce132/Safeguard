@@ -4,20 +4,23 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.ArrayList;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.io.FileUtils;
 
+import net.geforcemods.safeguard.loader.ModList;
 import net.geforcemods.safeguard.wrappers.CFFile;
-import net.geforcemods.safeguard.wrappers.CFMod;
 
 public class Downloader {
 	
-	public static HashMap<String, CFMod> downloadedDependencies = new HashMap<String, CFMod>();
+	public static ArrayList<ModList> downloadedDependencies = new ArrayList<ModList>();
 	
 	public static void downloadMod(CFFile modToDownload, String path) throws IOException{
+		System.out.println("Downloading " + modToDownload.name);
+
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
 		
@@ -25,7 +28,7 @@ public class Downloader {
 		
 		try{
 			URL website = new URL(modToDownload.url + "/file");
-			HttpURLConnection conn = (HttpURLConnection) website.openConnection();
+			HttpsURLConnection conn = (HttpsURLConnection) website.openConnection();
 			conn.connect();
             
             File fileDirectory = new File(path);
@@ -55,5 +58,4 @@ public class Downloader {
 			}
 		}
 	}
-
 }
