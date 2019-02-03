@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 
 import net.geforcemods.safeguard.Safeguard;
 import net.geforcemods.safeguard.downloader.Downloader;
+import net.geforcemods.safeguard.lists.DependenciesList;
 import net.geforcemods.safeguard.wrappers.CFMod;
 import net.geforcemods.safeguard.wrappers.ModInfo;
 import net.minecraftforge.fml.common.versioning.DependencyParser;
@@ -41,7 +42,7 @@ public class DependencyHandler {
 		for(ModInfo dependency : dependencies) {
 			if(dependency.modid.equals("forge")) continue;
 
-			ModList cfDependency = getDependencyFromID(dependency.modid);
+			DependenciesList cfDependency = getDependencyFromID(dependency.modid);
 			
 			if(cfDependency == null) {
 				Safeguard.LOGGER.log(Level.WARNING, modInfo.modid + " requires the mod '" + dependency.modid + "' but Safeguard could not resolve this mod. Skipping...");
@@ -49,8 +50,6 @@ public class DependencyHandler {
 			}
 
 			if(Downloader.downloadedDependencies.contains(cfDependency)) continue;
-			
-			System.out.printf("%s\n%s\n", info.dependencies, info.requirements);
 			
 			try {
 				SSLContext ctx = SSLContext.getInstance("TLS");
@@ -74,9 +73,7 @@ public class DependencyHandler {
 			CFMod result  = new Gson().fromJson(new InputStreamReader(con.getInputStream()), CFMod.class);
 	
 			con.disconnect();
-			
-			System.out.printf("%s\n%d\n", result.title, result.files.length);
-	
+
 			Downloader.downloadMod(result.download, ModDetector.modDir.getAbsolutePath() + "\\" + Safeguard.MCVERSION);
 			Downloader.downloadedDependencies.add(cfDependency);
 		}
@@ -87,16 +84,16 @@ public class DependencyHandler {
 		String[] dependency = string.split(", ");
 
 		for(int i = 0; i < dependency.length; i++) {
-			dependencies.add(new ModInfo(StringUtils.substringBetween(dependency[i], "[", "@["), null, StringUtils.substringBetween(dependency[i], "@[", ","), null));
+			dependencies.add(new ModInfo(i > 0 ? StringUtils.substringBefore(dependency[i], "@[") : StringUtils.substringBetween(string, "[", "@["), null, StringUtils.substringBetween(dependency[i], "@[", ","), null));
 		}
 
 		return dependencies;
 	}
 	
-	public static ModList getDependencyFromID(String modid) {
-		for(int i = 0; i < ModList.values().length; i++) {
-			if(modid.equals(ModList.values()[i].modID)) {
-				return ModList.values()[i];
+	public static DependenciesList getDependencyFromID(String modid) {
+		for(int i = 0; i < DependenciesList.values().length; i++) {
+			if(modid.equals(DependenciesList.values()[i].modID)) {
+				return DependenciesList.values()[i];
 			}
 		}
 		
@@ -109,9 +106,7 @@ public class DependencyHandler {
         public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
 
         @Override
-        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-        	arg0[0].checkValidity();
-        }
+        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {

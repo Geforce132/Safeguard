@@ -5,21 +5,24 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.io.FileUtils;
 
-import net.geforcemods.safeguard.loader.ModList;
+import net.geforcemods.safeguard.Safeguard;
+import net.geforcemods.safeguard.lists.DependenciesList;
 import net.geforcemods.safeguard.wrappers.CFFile;
 
 public class Downloader {
 	
-	public static ArrayList<ModList> downloadedDependencies = new ArrayList<ModList>();
+	public static ArrayList<DependenciesList> downloadedDependencies = new ArrayList<DependenciesList>();
 	
 	public static void downloadMod(CFFile modToDownload, String path) throws IOException{
-		System.out.println("Downloading " + modToDownload.name);
+		Safeguard.LOGGER.log(Level.INFO, "Attempting to download " + modToDownload.name + "...");
 
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
@@ -41,9 +44,13 @@ public class Downloader {
 		    if(!fileToCreate.exists()){
 			    fileToCreate.createNewFile();
 			    fileToCreate.setWritable(true);
+
+			    FileUtils.copyURLToFile(website, fileToCreate);
+			    Safeguard.LOGGER.log(Level.INFO, "Downloaded " + modToDownload.name);
 		    }
-		    
-		    FileUtils.copyURLToFile(website, fileToCreate);
+		    else {
+		    	Safeguard.LOGGER.log(Level.INFO, "A file named " + modToDownload.name + " already exists, skipping...");
+		    }
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -57,5 +64,18 @@ public class Downloader {
 				out.close();
 			}
 		}
+	}
+
+	public static boolean isOnline() {
+		try { 
+            URL url = new URL("https://www.google.com/"); 
+            URLConnection connection = url.openConnection(); 
+            connection.connect(); 
+
+            return true;
+        } 
+        catch (Exception e) { 
+            return false;
+        } 
 	}
 }

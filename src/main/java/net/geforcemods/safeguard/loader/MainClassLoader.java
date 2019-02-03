@@ -2,17 +2,15 @@ package net.geforcemods.safeguard.loader;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 
-import net.geforcemods.safeguard.Safeguard;
+import net.geforcemods.safeguard.lists.DependantsList;
 import net.geforcemods.safeguard.wrappers.ModInfo;
 
 public class MainClassLoader {
@@ -28,17 +26,10 @@ public class MainClassLoader {
 	public ArrayList<String> getMainClasses() {
 		ArrayList<String> map = new ArrayList<String>();
 
-		InputStream inputStream = MainClassLoader.class.getResourceAsStream("/assets/" + Safeguard.MODID + "/main_classes.txt");
-
-		Scanner scanner = new Scanner(inputStream);
-
-		while(scanner.hasNextLine()) {
-			String classPath = scanner.nextLine();
-
-			map.add(classPath);
+		for(int i = 0; i < DependantsList.values().length; i++) {
+			map.add(DependantsList.values()[i].classPath);
 		}
 
-		scanner.close();
 		return map;
 	}
 
@@ -71,10 +62,7 @@ public class MainClassLoader {
 			{
 				ex.printStackTrace();
 			} 
-			catch (ClassNotFoundException e) 
-			{
-				System.out.println(mainClasses.get(i) + " doesn't exist in " + mod.getName() + ", skipping");
-			}
+			catch (ClassNotFoundException e) {}
 		}
 	}
 

@@ -1,4 +1,0 @@
-com.mcf.davidee.guilib.GuiLibrary
-net.geforcemods.securitycraft.SecurityCraft
-com.dynious.versionchecker.VersionChecker
-com.mia.props.Props

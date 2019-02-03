@@ -1,7 +1,10 @@
 package net.geforcemods.safeguard.asm;
 
 import java.util.Map;
+import java.util.logging.Level;
 
+import net.geforcemods.safeguard.Safeguard;
+import net.geforcemods.safeguard.downloader.Downloader;
 import net.geforcemods.safeguard.loader.ModDetector;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
@@ -11,7 +14,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
  * Forge does its dependency check
  */
 @IFMLLoadingPlugin.TransformerExclusions({"net.geforcemods.safeguard.asm"})
-@MCVersion(value="1.12.2")
+@MCVersion(value=Safeguard.MCVERSION)
 public class LoadingHook implements IFMLLoadingPlugin {
 
     public LoadingHook() {}
@@ -43,6 +46,12 @@ public class LoadingHook implements IFMLLoadingPlugin {
     	// Doing this here because it takes a few milliseconds for the property to be updated
         // Used when opening connections to downloads
 		System.setProperty("http.agent", "Chrome");
+
+    	if(!Downloader.isOnline()) {
+    		Safeguard.LOGGER.log(Level.WARNING, "No internet connection detected, Safeguard functionality is disabled!");
+    		return null;
+    	}
+
     	ModDetector.detectMods();
         return null;
     }
