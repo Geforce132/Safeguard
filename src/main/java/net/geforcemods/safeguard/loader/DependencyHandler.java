@@ -22,15 +22,21 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class DependencyHandler {
 
+	/**
+	 * Handles checking for and downloading any dependency that a mod may require
+	 * @param modInfo the dependant's info
+	 * @throws IOException
+	 */
 	public static void handleDependency(ModInfo modInfo) throws IOException {		
 		DependencyParser dependencyParser = new DependencyParser(modInfo.modid, Side.CLIENT);
         DependencyParser.DependencyInfo info = dependencyParser.parseDependencies(modInfo.dependencies);
 
-		System.out.println(modInfo.modid + " needs " + modInfo.dependencies);
+		Safeguard.LOGGER.log(Level.INFO, modInfo.modid + " needs " + modInfo.dependencies);
 
 		ArrayList<ModInfo> dependencies = getDependenciesFromString(info.requirements.toString());
 		
 		for(ModInfo dependency : dependencies) {
+			// Ignore the dependency if it is Forge itself
 			if(dependency.modid.equals("forge")) continue;
 
 			DependenciesList cfDependency = getDependencyFromID(dependency.modid);
@@ -42,23 +48,8 @@ public class DependencyHandler {
 
 			if(Downloader.downloadedDependencies.contains(cfDependency)) continue;
 			
-			/*try {
-				SSLContext ctx = SSLContext.getInstance("TLS");
-				ctx.init(new KeyManager[0], new TrustManager[] {new DefaultTrustManager()}, new SecureRandom());
-				SSLContext.setDefault(ctx);
-			}
-			catch(Exception e){
-				
-			}*/
-			
 			URL url = new URL("https://api.cfwidget.com/minecraft/mc-mods/" + cfDependency.cfProjectName + "?version=" + Safeguard.MCVERSION);
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-			/*con.setHostnameVerifier(new HostnameVerifier() {
-	            @Override
-	            public boolean verify(String arg0, SSLSession arg1) {
-	                return true;
-	            }
-	        });*/
 			con.setRequestMethod("GET");
 			
 			CFMod result  = new Gson().fromJson(new InputStreamReader(con.getInputStream()), CFMod.class);
@@ -70,6 +61,10 @@ public class DependencyHandler {
 		}
 	}
 	
+	/**
+	 * Parse each individual mod (and its version) from a @Mod.dependencies() string
+	 * @param string The string to parse
+	 */
 	public static ArrayList<ModInfo> getDependenciesFromString(String string) {
 		ArrayList<ModInfo> dependencies = new ArrayList<ModInfo>();
 		String[] dependency = string.split(", ");
@@ -81,6 +76,10 @@ public class DependencyHandler {
 		return dependencies;
 	}
 	
+	/**
+	 * Lookup a supported dependency by its mod ID
+	 * @param modid The mod ID of the dependency
+	 */
 	public static DependenciesList getDependencyFromID(String modid) {
 		for(int i = 0; i < DependenciesList.values().length; i++) {
 			if(modid.equals(DependenciesList.values()[i].modID)) {
@@ -90,19 +89,5 @@ public class DependencyHandler {
 		
 		return null;
 	}
-	
-	/*private static class DefaultTrustManager implements X509TrustManager {
-
-        @Override
-        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
-
-        @Override
-        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return null;
-        }
-    }*/
 
 }

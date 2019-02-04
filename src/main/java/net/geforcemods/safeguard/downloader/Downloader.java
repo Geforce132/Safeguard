@@ -19,6 +19,13 @@ public class Downloader {
 	
 	public static ArrayList<DependenciesList> downloadedDependencies = new ArrayList<DependenciesList>();
 	
+	/**
+	 * Downloads a specific mod from CurseForge
+	 * 
+	 * @param modToDownload The mod to download
+	 * @param path The path to copy to
+	 * @throws IOException
+	 */
 	public static void downloadMod(CFFile modToDownload, String path) throws IOException{
 		Safeguard.LOGGER.log(Level.INFO, "Attempting to download " + modToDownload.name + "...");
 
@@ -62,6 +69,9 @@ public class Downloader {
 		}
 	}
 
+	/**
+	 * Returns true if the client has an active connection to the internet
+	 */
 	public static boolean isOnline() {
 		try { 
             URL url = new URL("https://www.google.com/"); 

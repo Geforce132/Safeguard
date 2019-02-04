@@ -14,6 +14,9 @@ public class ModDetector {
 	public static MainClassLoader classLoader;
 	public static File modDir;
 	
+	/**
+	 * Creates a new class loader and detects all of the mods for dependency checking
+	 */
 	public static void detectMods() {
 		if(classLoader == null) classLoader = new MainClassLoader();
 
@@ -21,6 +24,10 @@ public class ModDetector {
 		classLoader.loadMainClasses(mods);
 	}
 
+	/**
+	 * Returns all the files in the /mods/ and /mods/<i>mcversion</i>/ folders
+	 * @return
+	 */
 	private static ArrayList<File> getModJars() {
 		ArrayList<File> modJars = new ArrayList<File>();
 

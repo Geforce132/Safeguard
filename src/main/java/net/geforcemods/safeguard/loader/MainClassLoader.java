@@ -15,6 +15,10 @@ import net.geforcemods.safeguard.wrappers.ModInfo;
 
 public class MainClassLoader {
 	
+	/**
+	 * Load all the classes from {@link DependantsList} and see if any are present
+	 * in the /mods/ folder. If so, load the class and check its @Mod dependencies
+	 */
 	public void loadMainClasses(ArrayList<File> mods) {
 		ArrayList<String> modClassMap = getMainClasses();
 		
@@ -23,6 +27,9 @@ public class MainClassLoader {
 		}
 	}
 
+	/**
+	 * Returns all the mods to check dependencies for
+	 */
 	public ArrayList<String> getMainClasses() {
 		ArrayList<String> map = new ArrayList<String>();
 
@@ -33,9 +40,14 @@ public class MainClassLoader {
 		return map;
 	}
 
+	/**
+	 * Loads a .jar file and checks to see if any of the classes in {@link DependantsList}
+	 * are present in it
+	 * 
+	 * @param mod The file to check
+	 * @param mainClasses The classes to check for
+	 */
 	private void loadClass(File mod, ArrayList<String> mainClasses) {
-	    System.out.println("checking " + mod.getName());
-
 		for(int i = 0; i < mainClasses.size(); i++) {
 			try {
 			    URL fileURL = mod.toURI().toURL();
@@ -43,7 +55,6 @@ public class MainClassLoader {
 			    URL urls [] = { new URL(jarURL) };
 			    URLClassLoader clsLoader = URLClassLoader.newInstance(urls);
 			    Class<?> cls = clsLoader.loadClass(mainClasses.get(i));
-			    System.out.println("Found " + cls.getSimpleName());
 			    
 			    if(isMod(cls)) {
 			    	ModInfo modInfo = getModInfo(cls);
@@ -66,6 +77,9 @@ public class MainClassLoader {
 		}
 	}
 
+	/**
+	 * Returns true if a class file has a @Mod annotation
+	 */
 	public static boolean isMod(Class<?> clazz) {
 		if(getModAnnotationString(clazz) != null)
 			return true;
@@ -73,6 +87,9 @@ public class MainClassLoader {
 		return false;
 	}
 	
+	/**
+	 * Gets a class's @Mod information in String form
+	 */
 	public static String getModAnnotationString(Class<?> clazz) {
 		for(Annotation a : clazz.getDeclaredAnnotations()) {
 			if(a.toString().startsWith("@net.minecraftforge.fml.common.Mod("))
@@ -82,6 +99,9 @@ public class MainClassLoader {
 		return null;
 	}
 
+	/**
+	 * Parses the @Mod information from a class and returns it in ModInfo form
+	 */
 	public static ModInfo getModInfo(Class<?> clazz) {
 		if(!isMod(clazz)) return null;
 		

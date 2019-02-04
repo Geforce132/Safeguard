@@ -1,5 +1,8 @@
 package net.geforcemods.safeguard.wrappers;
 
+/**
+ * Wrapper class for a loaded mod's main info
+ */
 public class ModInfo {
 	
 	public final String modid;
