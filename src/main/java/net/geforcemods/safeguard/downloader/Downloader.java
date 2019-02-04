@@ -9,8 +9,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import org.apache.commons.io.FileUtils;
 
 import net.geforcemods.safeguard.Safeguard;
@@ -31,8 +29,6 @@ public class Downloader {
 		
 		try{
 			URL website = new URL(modToDownload.url + "/file");
-			HttpsURLConnection conn = (HttpsURLConnection) website.openConnection();
-			conn.connect();
             
             File fileDirectory = new File(path);
             File fileToCreate = new File(fileDirectory, fileName);
