@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(modid=Safeguard.MODID, name="Safeguard", version=Safeguard.VERSION)
+@Mod(modid=Safeguard.MODID, name="Safeguard", version=Safeguard.VERSION, certificateFingerprint="0b0528db0f7be799b57a7b7200f22870dc018fc2")
 public class Safeguard {
 	
 	public static final String MODID = "safeguard";
